@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InforMaster Loja - Papelaria, Informática e Segurança</title>
+    <meta name="description" content="InforMaster — papelaria, informática e câmeras de segurança em Ilhéus/BA. 20 anos de tradição, assistência técnica especializada e entrega rápida.">
+    <meta property="og:title" content="InforMaster Loja — Papelaria, Informática e Segurança">
+    <meta property="og:description" content="Cadernos, agendas, acessórios de informática e câmeras de segurança, com 20 anos de tradição em Ilhéus/BA.">
+    <meta property="og:type" content="website">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome para ícones -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Arquivo CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Cabeçalho + Navegação (agrupados para ficarem fixos juntos ao rolar) -->
+    <div class="site-top">
+        <header class="header">
+            <div class="container header-container">
+                <a href="#" class="logo">Infor<span>Master</span></a>
+
+                <div class="search-bar" id="searchBar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" placeholder="O que você está procurando hoje?">
+                </div>
+
+                <div class="header-actions">
+                    <button class="icon-btn search-toggle-btn" id="searchToggleBtn" aria-label="Buscar">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                    <button class="cart-btn" id="cartBtn" aria-label="Abrir carrinho">
+                        <i class="fa-solid fa-cart-shopping"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navegação por Categorias (Tabs) -->
+        <nav class="nav-categories">
+            <div class="container nav-categories-inner">
+                <div class="nav-tabs" id="navTabs">
+                    <button class="tab-btn active" data-category="all">Todos os Produtos</button>
+                    <button class="tab-btn" data-category="agendas">Agendas</button>
+                    <button class="tab-btn" data-category="cadernos">Cadernos</button>
+                    <button class="tab-btn" data-category="canetas">Canetas &amp; Lápis</button>
+                    <button class="tab-btn" data-category="borrachas">Borrachas &amp; Apontadores</button>
+                    <button class="tab-btn" data-category="escolar">Escolar</button>
+                    <button class="tab-btn" data-category="escritorio">Escritório</button>
+                    <button class="tab-btn" data-category="linha-fofa">Linha Fofa</button>
+                    <button class="tab-btn" data-category="kits">Kits &amp; Presentes</button>
+                    <button class="tab-btn" data-category="criativo">Criativo</button>
+                    <button class="tab-btn" data-category="gamer">Gamer</button>
+                    <button class="tab-btn" data-category="informatica">Informática</button>
+                    <button class="tab-btn" data-category="cameras">Câmeras</button>
+                </div>
+                <a href="https://wa.me/557388594003" target="_blank" rel="noopener" class="nav-cta">
+                    <i class="fa-brands fa-whatsapp"></i> Compre já!
+                </a>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Seção Principal de Produtos -->
+    <main class="container main-content">
+        <section class="hero-carousel" id="heroCarousel">
+            <div class="hero-track" id="heroTrack">
+
+                <div class="hero-slide slide-papelaria">
+                    <div class="hero-decor">
+                        <span class="star star-1">✦</span>
+                        <span class="star star-2">★</span>
+                        <span class="star star-3">✧</span>
+                    </div>
+                    <div class="hero-text">
+                        <span class="hero-kicker">Novidades toda semana</span>
+                        <h1>Papelaria<br>que inspira</h1>
+                        <p>Cadernos, canetas e organizadores pra deixar sua rotina mais bonita e produtiva.</p>
+                        <button class="hero-cta" onclick="filterFromHero('papelaria')">Ver Papelaria</button>
+                    </div>
+                    <div class="hero-image">
+                        <img src="https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=700&q=80" alt="Linha de papelaria InforMaster">
+                    </div>
+                </div>
+
+                <div class="hero-slide slide-informatica">
+                    <div class="hero-decor">
+                        <span class="star star-1">✧</span>
+                        <span class="star star-2">✦</span>
+                        <span class="star star-3">★</span>
+                    </div>
+                    <div class="hero-text">
+                        <span class="hero-kicker">Performance sem esforço</span>
+                        <h1>Informática<br>na medida certa</h1>
+                        <p>Mouses, teclados e headsets pra deixar sua rotina — ou seu setup gamer — no próximo nível.</p>
+                        <button class="hero-cta" onclick="filterFromHero('informatica')">Ver Informática</button>
+                    </div>
+                    <div class="hero-image">
+                        <img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=700&q=80" alt="Acessórios de informática InforMaster">
+                    </div>
+                </div>
+
+                <div class="hero-slide slide-cameras">
+                    <div class="hero-decor">
+                        <span class="star star-1">★</span>
+                        <span class="star star-2">✧</span>
+                        <span class="star star-3">✦</span>
+                    </div>
+                    <div class="hero-text">
+                        <span class="hero-kicker">Sua casa, sempre vigiada</span>
+                        <h1>Segurança<br>que dá paz</h1>
+                        <p>Câmeras inteligentes com monitoramento em tempo real, direto do seu celular.</p>
+                        <button class="hero-cta" onclick="filterFromHero('cameras')">Ver Câmeras</button>
+                    </div>
+                    <div class="hero-image">
+                        <img src="https://images.unsplash.com/photo-1557324232-b8917d3c3dcb?auto=format&fit=crop&w=700&q=80" alt="Câmeras de segurança InforMaster">
+                    </div>
+                </div>
+
+            </div>
+
+            <button class="hero-arrow prev" id="heroPrev" aria-label="Slide anterior">&#10094;</button>
+            <button class="hero-arrow next" id="heroNext" aria-label="Próximo slide">&#10095;</button>
+            <div class="hero-dots" id="heroDots"></div>
+        </section>
+
+        <div class="trust-bar">
+            <div class="trust-item"><i class="fa-solid fa-truck-fast"></i><span>Frete grátis acima de R$ 150</span></div>
+            <div class="trust-item"><i class="fa-solid fa-rotate-left"></i><span>Troca facilitada em 30 dias</span></div>
+            <div class="trust-item"><i class="fa-solid fa-lock"></i><span>Compra 100% segura</span></div>
+            <div class="trust-item"><i class="fa-solid fa-credit-card"></i><span>Em até 3x sem juros</span></div>
+        </div>
+
+        <div class="section-title-row">
+            <div class="section-title">
+                <h2 id="categoryTitle">Nossos Produtos</h2>
+                <p>Explore nossa seleção especial de itens de alta qualidade</p>
+            </div>
+            <div class="sort-control">
+                <label for="sortSelect">Ordenar por</label>
+                <select id="sortSelect">
+                    <option value="relevance">Relevância</option>
+                    <option value="price-asc">Menor preço</option>
+                    <option value="price-desc">Maior preço</option>
+                    <option value="name-asc">Nome A-Z</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Vitrine de Produtos -->
+        <div class="products-grid" id="productsGrid">
+            <!-- Os cards serão injetados via JavaScript -->
+        </div>
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="footer">
+        <div class="container footer-grid">
+
+            <div class="footer-col footer-brand">
+                <a href="#" class="logo footer-logo">Infor<span>Master</span></a>
+                <p class="footer-about">Há 20 anos em Ilhéus com papelaria, informática e segurança eletrônica — além de assistência técnica especializada.</p>
+                <div class="footer-social">
+                    <span class="footer-social-label">Nas redes</span>
+                    <div class="footer-social-icons">
+                        <a href="https://www.instagram.com/informasteroficial" target="_blank" rel="noopener" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" target="_blank" rel="noopener" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="https://wa.me/557388594003" target="_blank" rel="noopener" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div class="footer-payments">
+                    <span class="footer-social-label">Formas de pagamento</span>
+                    <div class="payment-icons">
+                        <i class="fa-brands fa-cc-visa" title="Visa"></i>
+                        <i class="fa-brands fa-cc-mastercard" title="Mastercard"></i>
+                        <span class="payment-pix">Pix</span>
+                        <i class="fa-solid fa-barcode" title="Boleto"></i>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>Categorias</h4>
+                <ul>
+                    <li><a href="#" class="footer-cat-link" data-category="papelaria">Papelaria</a></li>
+                    <li><a href="#" class="footer-cat-link" data-category="linha-fofa">Linha Fofa</a></li>
+                    <li><a href="#" class="footer-cat-link" data-category="kits">Kits & Presentes</a></li>
+                    <li><a href="#" class="footer-cat-link" data-category="gamer">Gamer</a></li>
+                    <li><a href="#" class="footer-cat-link" data-category="informatica">Informática</a></li>
+                    <li><a href="#" class="footer-cat-link" data-category="cameras">Câmeras &amp; Segurança</a></li>
+                    <li><a href="#" class="footer-cat-link" data-category="all">Todos os Produtos</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Atendimento</h4>
+                <ul>
+                    <li><i class="fa-solid fa-location-dot"></i> Av. Ver. Amilton Ignácio de Castro, 798 - Barra, Ilhéus - BA</li>
+                    <li><i class="fa-solid fa-phone"></i> (73) 3639-2820</li>
+                    <li><i class="fa-solid fa-clock"></i> Seg. a Sáb., 8h às 18h</li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Institucional</h4>
+                <ul>
+                    <li><a href="#">Sobre a InforMaster</a></li>
+                    <li><a href="#">Assistência Técnica</a></li>
+                    <li><a href="#">Trocas e Devoluções</a></li>
+                    <li><a href="#">Política de Privacidade</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container footer-bottom-inner">
+                <p>&copy; 2026 InforMaster Loja. Todos os direitos reservados.</p>
+                <p class="footer-cnpj">Av. Ver. Amilton Ignácio de Castro, 798 - Barra, Ilhéus - BA</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Carrinho de Compras Lateral (Sidebar) -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <h3><i class="fa-solid fa-bag-shopping"></i> Seu Carrinho</h3>
+            <button class="close-cart" id="closeCart">&times;</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <!-- Itens do carrinho aparecerão aqui -->
+            <p class="empty-cart-msg">Seu carrinho está vazio.</p>
+        </div>
+        <div class="cart-footer">
+            <div class="free-shipping-bar" id="freeShippingBar">
+                <p id="freeShippingText"></p>
+                <div class="progress-track"><div class="progress-fill" id="freeShippingFill"></div></div>
+            </div>
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotal">R$ 0,00</span>
+            </div>
+            <button class="checkout-btn" id="checkoutBtn" disabled>Finalizar Compra</button>
+        </div>
+    </div>
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Modal de Checkout Simulado -->
+    <div class="modal" id="checkoutModal">
+        <div class="modal-content">
+            <button class="close-modal" id="closeModal">&times;</button>
+            <h2>Finalizar Pedido</h2>
+            <form id="checkoutForm">
+                <div class="form-group">
+                    <label for="name">Nome Completo</label>
+                    <input type="text" id="name" required placeholder="Ex: Maria Silva">
+                </div>
+                <div class="form-group">
+                    <label for="email">E-mail</label>
+                    <input type="email" id="email" required placeholder="seu@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="cep">CEP</label>
+                    <input type="text" id="cep" required placeholder="00000-000" maxlength="9">
+                </div>
+                <div class="form-group">
+                    <label for="payment">Forma de Pagamento</label>
+                    <select id="payment" required>
+                        <option value="">Selecione...</option>
+                        <option value="cartao">Cartão de Crédito</option>
+                        <option value="pix">PIX (Aprovação imediata)</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-order-btn">Confirmar Pedido</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de Visualização Rápida do Produto -->
+    <div class="modal" id="quickViewModal">
+        <div class="modal-content quickview-content">
+            <button class="close-modal" id="closeQuickView">&times;</button>
+            <div class="quickview-image">
+                <img id="qvImage" src="" alt="">
+            </div>
+            <div class="quickview-info">
+                <span class="product-tag" id="qvTag"></span>
+                <h2 id="qvTitle"></h2>
+                <div class="qv-price" id="qvPrice"></div>
+                <div class="qv-installment" id="qvInstallment"></div>
+                <div id="qvStock"></div>
+                <p class="qv-description" id="qvDescription"></p>
+                <div class="qv-qty-row">
+                    <span>Quantidade</span>
+                    <div class="qty-stepper">
+                        <button class="qty-btn" id="qvMinus">-</button>
+                        <span id="qvQty">1</span>
+                        <button class="qty-btn" id="qvPlus">+</button>
+                    </div>
+                </div>
+                <button class="hero-cta qv-add-btn" id="qvAddBtn">
+                    <i class="fa-solid fa-cart-plus"></i> Adicionar ao Carrinho
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Sucesso -->
+    <div class="modal" id="successModal">
+        <div class="modal-content success-content">
+            <i class="fa-solid fa-circle-check success-icon"></i>
+            <h2>Pedido Realizado com Sucesso!</h2>
+            <p class="order-number">Pedido <strong id="orderNumberDisplay"></strong></p>
+            <p>Obrigado por comprar na InforMaster. Enviamos os detalhes do pedido para o seu e-mail.</p>
+            <button class="submit-order-btn" id="finishSuccessBtn">Voltar à Loja</button>
+        </div>
+    </div>
+
+    <!-- Notificações -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Botão flutuante de WhatsApp (visível no celular, onde fica o "Compre já!" do menu) -->
+    <a href="https://wa.me/557388594003" target="_blank" rel="noopener" class="floating-whatsapp" aria-label="Fale conosco no WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- Arquivo JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>

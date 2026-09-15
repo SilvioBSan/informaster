@@ -1,31 +1,31 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>InforMaster Loja - Papelaria, Informática e Segurança</title>
-    <meta name="description" content="InforMaster — papelaria, informática e câmeras de segurança em Ilhéus/BA. 20 anos de tradição, assistência técnica especializada e entrega rápida.">
-    <meta property="og:title" content="InforMaster Loja — Papelaria, Informática e Segurança">
-    <meta property="og:description" content="Cadernos, agendas, acessórios de informática e câmeras de segurança, com 20 anos de tradição em Ilhéus/BA.">
+    <title>InforMaster Loja - Papelaria, InformÃ¡tica e SeguranÃ§a</title>
+    <meta name="description" content="InforMaster â€” papelaria, informÃ¡tica e cÃ¢meras de seguranÃ§a em IlhÃ©us/BA. 20 anos de tradiÃ§Ã£o, assistÃªncia tÃ©cnica especializada e entrega rÃ¡pida.">
+    <meta property="og:title" content="InforMaster Loja â€” Papelaria, InformÃ¡tica e SeguranÃ§a">
+    <meta property="og:description" content="Cadernos, agendas, acessÃ³rios de informÃ¡tica e cÃ¢meras de seguranÃ§a, com 20 anos de tradiÃ§Ã£o em IlhÃ©us/BA.">
     <meta property="og:type" content="website">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://identity.netlify.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' https: data:; connect-src 'self' https://viacep.com.br https://api.emailjs.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome para ícones -->
+    <!-- FontAwesome para Ã­cones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- EmailJS (envio de e-mail de confirmação de pedido direto do navegador, sem backend) -->
+    <!-- EmailJS (envio de e-mail de confirmaÃ§Ã£o de pedido direto do navegador, sem backend) -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-    <!-- Netlify Identity Widget: necessário para que os links de convite e de
+    <!-- Netlify Identity Widget: necessÃ¡rio para que os links de convite e de
          "esqueci minha senha" do painel /admin funcionem quando abertos na
-         página principal do site (fora do /admin). Sem isso, o link de
-         convite carrega o site normalmente e não abre a tela de criar senha. -->
+         pÃ¡gina principal do site (fora do /admin). Sem isso, o link de
+         convite carrega o site normalmente e nÃ£o abre a tela de criar senha. -->
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <!-- Arquivo CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Cabeçalho + Navegação (agrupados para ficarem fixos juntos ao rolar) -->
+    <!-- CabeÃ§alho + NavegaÃ§Ã£o (agrupados para ficarem fixos juntos ao rolar) -->
     <div class="site-top">
         <header class="header">
             <div class="container header-container">
@@ -33,7 +33,7 @@
 
                 <div class="search-bar" id="searchBar">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="searchInput" placeholder="O que você está procurando hoje?">
+                    <input type="text" id="searchInput" placeholder="O que vocÃª estÃ¡ procurando hoje?">
                 </div>
 
                 <div class="header-actions">
@@ -48,112 +48,61 @@
             </div>
         </header>
 
-        <!-- Navegação por Categorias (Tabs) -->
+        <!-- NavegaÃ§Ã£o por Categorias (Tabs) -->
         <nav class="nav-categories">
             <div class="container nav-categories-inner">
                 <div class="nav-tabs" id="navTabs">
                     <button class="tab-btn active" data-category="all">Todos os Produtos</button>
                     <button class="tab-btn" data-category="agendas">Agendas</button>
                     <button class="tab-btn" data-category="cadernos">Cadernos</button>
-                    <button class="tab-btn" data-category="canetas">Canetas &amp; Lápis</button>
+                    <button class="tab-btn" data-category="canetas">Canetas &amp; LÃ¡pis</button>
                     <button class="tab-btn" data-category="borrachas">Borrachas &amp; Apontadores</button>
                     <button class="tab-btn" data-category="escolar">Escolar</button>
-                    <button class="tab-btn" data-category="escritorio">Escritório</button>
+                    <button class="tab-btn" data-category="escritorio">EscritÃ³rio</button>
                     <button class="tab-btn" data-category="linha-fofa">Linha Fofa</button>
                     <button class="tab-btn" data-category="kits">Kits &amp; Presentes</button>
                     <button class="tab-btn" data-category="criativo">Criativo</button>
                     <button class="tab-btn" data-category="gamer">Gamer</button>
-                    <button class="tab-btn" data-category="informatica">Informática</button>
-                    <button class="tab-btn" data-category="cameras">Câmeras</button>
+                    <button class="tab-btn" data-category="informatica">InformÃ¡tica</button>
+                    <button class="tab-btn" data-category="cameras">CÃ¢meras</button>
                 </div>
                 <a href="https://wa.me/557388594003" target="_blank" rel="noopener" class="nav-cta">
-                    <i class="fa-brands fa-whatsapp"></i> Compre já!
+                    <i class="fa-brands fa-whatsapp"></i> Compre jÃ¡!
                 </a>
             </div>
         </nav>
     </div>
 
-    <!-- Seção Principal de Produtos -->
+    <!-- SeÃ§Ã£o Principal de Produtos -->
     <main class="container main-content">
         <section class="hero-carousel" id="heroCarousel">
             <div class="hero-track" id="heroTrack">
-
-                <div class="hero-slide slide-papelaria">
-                    <div class="hero-decor">
-                        <span class="star star-1">✦</span>
-                        <span class="star star-2">★</span>
-                        <span class="star star-3">✧</span>
-                    </div>
-                    <div class="hero-text">
-                        <span class="hero-kicker">Novidades toda semana</span>
-                        <h1>Papelaria<br>que inspira</h1>
-                        <p>Cadernos, canetas e organizadores pra deixar sua rotina mais bonita e produtiva.</p>
-                        <button class="hero-cta" onclick="filterFromHero('papelaria')">Ver Papelaria</button>
-                    </div>
-                    <div class="hero-image">
-                        <img src="https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=700&q=80" alt="Linha de papelaria InforMaster">
-                    </div>
-                </div>
-
-                <div class="hero-slide slide-informatica">
-                    <div class="hero-decor">
-                        <span class="star star-1">✧</span>
-                        <span class="star star-2">✦</span>
-                        <span class="star star-3">★</span>
-                    </div>
-                    <div class="hero-text">
-                        <span class="hero-kicker">Performance sem esforço</span>
-                        <h1>Informática<br>na medida certa</h1>
-                        <p>Mouses, teclados e headsets pra deixar sua rotina — ou seu setup gamer — no próximo nível.</p>
-                        <button class="hero-cta" onclick="filterFromHero('informatica')">Ver Informática</button>
-                    </div>
-                    <div class="hero-image">
-                        <img src="https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=700&q=80" alt="Acessórios de informática InforMaster">
-                    </div>
-                </div>
-
-                <div class="hero-slide slide-cameras">
-                    <div class="hero-decor">
-                        <span class="star star-1">★</span>
-                        <span class="star star-2">✧</span>
-                        <span class="star star-3">✦</span>
-                    </div>
-                    <div class="hero-text">
-                        <span class="hero-kicker">Sua casa, sempre vigiada</span>
-                        <h1>Segurança<br>que dá paz</h1>
-                        <p>Câmeras inteligentes com monitoramento em tempo real, direto do seu celular.</p>
-                        <button class="hero-cta" onclick="filterFromHero('cameras')">Ver Câmeras</button>
-                    </div>
-                    <div class="hero-image">
-                        <img src="https://images.unsplash.com/photo-1557324232-b8917d3c3dcb?auto=format&fit=crop&w=700&q=80" alt="Câmeras de segurança InforMaster">
-                    </div>
-                </div>
-
+                <!-- Os slides sÃ£o injetados via JavaScript a partir de hero.json -->
             </div>
 
             <button class="hero-arrow prev" id="heroPrev" aria-label="Slide anterior">&#10094;</button>
-            <button class="hero-arrow next" id="heroNext" aria-label="Próximo slide">&#10095;</button>
+            <button class="hero-arrow next" id="heroNext" aria-label="PrÃ³ximo slide">&#10095;</button>
             <div class="hero-dots" id="heroDots"></div>
         </section>
 
         <div class="trust-bar">
-            <div class="trust-item"><i class="fa-solid fa-truck-fast"></i><span>Frete grátis acima de R$ 150</span></div>
+            <div class="trust-item"><i class="fa-solid fa-truck-fast"></i><span>Frete grÃ¡tis acima de R$ 150</span></div>
             <div class="trust-item"><i class="fa-solid fa-rotate-left"></i><span>Troca facilitada em 30 dias</span></div>
             <div class="trust-item"><i class="fa-solid fa-lock"></i><span>Compra 100% segura</span></div>
-            <div class="trust-item"><i class="fa-solid fa-credit-card"></i><span>Em até 3x sem juros</span></div>
+            <div class="trust-item"><i class="fa-solid fa-credit-card"></i><span>Em atÃ© 3x sem juros</span></div>
         </div>
 
         <div class="section-title-row">
             <div class="section-title">
                 <h2 id="categoryTitle">Nossos Produtos</h2>
-                <p>Explore nossa seleção especial de itens de alta qualidade</p>
+                <p>Explore nossa seleÃ§Ã£o especial de itens de alta qualidade</p>
             </div>
             <div class="sort-control">
                 <label for="sortSelect">Ordenar por</label>
                 <select id="sortSelect">
-                    <option value="relevance">Relevância</option>
-                    <option value="price-asc">Menor preço</option>
-                    <option value="price-desc">Maior preço</option>
+                    <option value="relevance">RelevÃ¢ncia</option>
+                    <option value="price-asc">Menor preÃ§o</option>
+                    <option value="price-desc">Maior preÃ§o</option>
                     <option value="name-asc">Nome A-Z</option>
                 </select>
             </div>
@@ -161,17 +110,17 @@
 
         <!-- Vitrine de Produtos -->
         <div class="products-grid" id="productsGrid">
-            <!-- Os cards serão injetados via JavaScript -->
+            <!-- Os cards serÃ£o injetados via JavaScript -->
         </div>
     </main>
 
-    <!-- Rodapé -->
+    <!-- RodapÃ© -->
     <footer class="footer">
         <div class="container footer-grid">
 
             <div class="footer-col footer-brand">
                 <a href="#" class="logo footer-logo">Infor<span>Master</span></a>
-                <p class="footer-about">Há 20 anos em Ilhéus com papelaria, informática e segurança eletrônica — além de assistência técnica especializada.</p>
+                <p class="footer-about">HÃ¡ 20 anos em IlhÃ©us com papelaria, informÃ¡tica e seguranÃ§a eletrÃ´nica â€” alÃ©m de assistÃªncia tÃ©cnica especializada.</p>
                 <div class="footer-social">
                     <span class="footer-social-label">Nas redes</span>
                     <div class="footer-social-icons">
@@ -198,8 +147,8 @@
                     <li><a href="#" class="footer-cat-link" data-category="linha-fofa">Linha Fofa</a></li>
                     <li><a href="#" class="footer-cat-link" data-category="kits">Kits & Presentes</a></li>
                     <li><a href="#" class="footer-cat-link" data-category="gamer">Gamer</a></li>
-                    <li><a href="#" class="footer-cat-link" data-category="informatica">Informática</a></li>
-                    <li><a href="#" class="footer-cat-link" data-category="cameras">Câmeras &amp; Segurança</a></li>
+                    <li><a href="#" class="footer-cat-link" data-category="informatica">InformÃ¡tica</a></li>
+                    <li><a href="#" class="footer-cat-link" data-category="cameras">CÃ¢meras &amp; SeguranÃ§a</a></li>
                     <li><a href="#" class="footer-cat-link" data-category="all">Todos os Produtos</a></li>
                 </ul>
             </div>
@@ -207,9 +156,9 @@
             <div class="footer-col">
                 <h4>Atendimento</h4>
                 <ul>
-                    <li><i class="fa-solid fa-location-dot"></i> Av. Ver. Amilton Ignácio de Castro, 798 - Barra, Ilhéus - BA</li>
+                    <li><i class="fa-solid fa-location-dot"></i> Av. Ver. Amilton IgnÃ¡cio de Castro, 798 - Barra, IlhÃ©us - BA</li>
                     <li><i class="fa-solid fa-phone"></i> (73) 3639-2820</li>
-                    <li><i class="fa-solid fa-clock"></i> Seg. a Sáb., 8h às 18h</li>
+                    <li><i class="fa-solid fa-clock"></i> Seg. a SÃ¡b., 8h Ã s 18h</li>
                 </ul>
             </div>
 
@@ -217,9 +166,9 @@
                 <h4>Institucional</h4>
                 <ul>
                     <li><a href="#">Sobre a InforMaster</a></li>
-                    <li><a href="#">Assistência Técnica</a></li>
-                    <li><a href="#">Trocas e Devoluções</a></li>
-                    <li><a href="privacidade.html">Política de Privacidade</a></li>
+                    <li><a href="#">AssistÃªncia TÃ©cnica</a></li>
+                    <li><a href="#">Trocas e DevoluÃ§Ãµes</a></li>
+                    <li><a href="privacidade.html">PolÃ­tica de Privacidade</a></li>
                 </ul>
             </div>
 
@@ -228,7 +177,7 @@
         <div class="footer-bottom">
             <div class="container footer-bottom-inner">
                 <p>&copy; 2026 InforMaster Loja. Todos os direitos reservados.</p>
-                <p class="footer-cnpj">Av. Ver. Amilton Ignácio de Castro, 798 - Barra, Ilhéus - BA</p>
+                <p class="footer-cnpj">Av. Ver. Amilton IgnÃ¡cio de Castro, 798 - Barra, IlhÃ©us - BA</p>
             </div>
         </div>
     </footer>
@@ -240,8 +189,8 @@
             <button class="close-cart" id="closeCart">&times;</button>
         </div>
         <div class="cart-items" id="cartItems">
-            <!-- Itens do carrinho aparecerão aqui -->
-            <p class="empty-cart-msg">Seu carrinho está vazio.</p>
+            <!-- Itens do carrinho aparecerÃ£o aqui -->
+            <p class="empty-cart-msg">Seu carrinho estÃ¡ vazio.</p>
         </div>
         <div class="cart-footer">
             <div class="free-shipping-bar" id="freeShippingBar">
@@ -268,7 +217,7 @@
                 <div class="checkout-step active" data-step="1"><span class="step-number">1</span><span class="step-label">Dados</span></div>
                 <div class="checkout-step" data-step="2"><span class="step-number">2</span><span class="step-label">Entrega</span></div>
                 <div class="checkout-step" data-step="3"><span class="step-number">3</span><span class="step-label">Pagamento</span></div>
-                <div class="checkout-step" data-step="4"><span class="step-number">4</span><span class="step-label">Revisão</span></div>
+                <div class="checkout-step" data-step="4"><span class="step-number">4</span><span class="step-label">RevisÃ£o</span></div>
             </div>
 
             <form id="checkoutForm">
@@ -302,7 +251,7 @@
                     </div>
                     <div class="form-row">
                         <div class="form-group form-group-small">
-                            <label for="number">Número</label>
+                            <label for="number">NÃºmero</label>
                             <input type="text" id="number" required placeholder="123">
                         </div>
                         <div class="form-group">
@@ -329,19 +278,19 @@
                 <!-- Etapa 3: Pagamento -->
                 <div class="checkout-panel" data-panel="3">
                     <div class="payment-method-tabs">
-                        <button type="button" class="payment-tab active" data-method="cartao"><i class="fa-solid fa-credit-card"></i> Cartão</button>
+                        <button type="button" class="payment-tab active" data-method="cartao"><i class="fa-solid fa-credit-card"></i> CartÃ£o</button>
                         <button type="button" class="payment-tab" data-method="pix"><i class="fa-brands fa-pix"></i> Pix</button>
                         <button type="button" class="payment-tab" data-method="boleto"><i class="fa-solid fa-barcode"></i> Boleto</button>
                     </div>
 
                     <div class="payment-panel active" data-payment="cartao">
                         <div class="form-group">
-                            <label for="cardNumber">Número do Cartão</label>
+                            <label for="cardNumber">NÃºmero do CartÃ£o</label>
                             <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19">
                         </div>
                         <div class="form-group">
-                            <label for="cardName">Nome Impresso no Cartão</label>
-                            <input type="text" id="cardName" placeholder="Como está no cartão">
+                            <label for="cardName">Nome Impresso no CartÃ£o</label>
+                            <input type="text" id="cardName" placeholder="Como estÃ¡ no cartÃ£o">
                         </div>
                         <div class="form-row">
                             <div class="form-group">
@@ -360,21 +309,21 @@
                     </div>
 
                     <div class="payment-panel" data-payment="pix">
-                        <p class="payment-hint">Ao confirmar o pedido, geramos um código Pix para você pagar pelo app do seu banco.</p>
+                        <p class="payment-hint">Ao confirmar o pedido, geramos um cÃ³digo Pix para vocÃª pagar pelo app do seu banco.</p>
                         <div class="pix-preview">
                             <div class="pix-qr-placeholder"><i class="fa-solid fa-qrcode"></i></div>
-                            <p class="payment-hint">O QR Code real é gerado após a confirmação do pedido.</p>
+                            <p class="payment-hint">O QR Code real Ã© gerado apÃ³s a confirmaÃ§Ã£o do pedido.</p>
                         </div>
                     </div>
 
                     <div class="payment-panel" data-payment="boleto">
-                        <p class="payment-hint">O boleto vence em 3 dias úteis. A compensação pode levar até 2 dias úteis após o pagamento.</p>
+                        <p class="payment-hint">O boleto vence em 3 dias Ãºteis. A compensaÃ§Ã£o pode levar atÃ© 2 dias Ãºteis apÃ³s o pagamento.</p>
                         <div class="boleto-barcode"></div>
-                        <p class="payment-hint">O boleto real é gerado após a confirmação do pedido.</p>
+                        <p class="payment-hint">O boleto real Ã© gerado apÃ³s a confirmaÃ§Ã£o do pedido.</p>
                     </div>
                 </div>
 
-                <!-- Etapa 4: Revisão -->
+                <!-- Etapa 4: RevisÃ£o -->
                 <div class="checkout-panel" data-panel="4">
                     <div class="review-block">
                         <h4>Itens do Pedido</h4>
@@ -403,7 +352,7 @@
         </div>
     </div>
 
-    <!-- Modal de Visualização Rápida do Produto -->
+    <!-- Modal de VisualizaÃ§Ã£o RÃ¡pida do Produto -->
     <div class="modal" id="quickViewModal">
         <div class="modal-content quickview-content">
             <button class="close-modal" id="closeQuickView">&times;</button>
@@ -439,19 +388,19 @@
             <h2>Pedido Realizado com Sucesso!</h2>
             <p class="order-number">Pedido <strong id="orderNumberDisplay"></strong></p>
             <p>Obrigado por comprar na InforMaster. Enviamos os detalhes do pedido para o seu e-mail.</p>
-            <button class="submit-order-btn" id="finishSuccessBtn">Voltar à Loja</button>
+            <button class="submit-order-btn" id="finishSuccessBtn">Voltar Ã  Loja</button>
         </div>
     </div>
 
-    <!-- Notificações -->
+    <!-- NotificaÃ§Ãµes -->
     <div class="toast-container" id="toastContainer"></div>
 
-    <!-- Botão flutuante de WhatsApp (visível no celular, onde fica o "Compre já!" do menu) -->
+    <!-- BotÃ£o flutuante de WhatsApp (visÃ­vel no celular, onde fica o "Compre jÃ¡!" do menu) -->
     <a href="https://wa.me/557388594003" target="_blank" rel="noopener" class="floating-whatsapp" aria-label="Fale conosco no WhatsApp">
         <i class="fa-brands fa-whatsapp"></i>
     </a>
 
-    <!-- Inicializa o widget do Netlify Identity e trata os links de convite / redefinição de senha
+    <!-- Inicializa o widget do Netlify Identity e trata os links de convite / redefiniÃ§Ã£o de senha
          que chegam por e-mail apontando para a raiz do site (ex: #invite_token=..., #recovery_token=...) -->
     <script>
         if (window.netlifyIdentity) {

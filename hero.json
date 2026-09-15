@@ -1,0 +1,28 @@
+﻿{
+  "slides": [
+    {
+      "kicker": "Novidades toda semana",
+      "title": "Papelaria\nque inspira",
+      "text": "Cadernos, canetas e organizadores pra deixar sua rotina mais bonita e produtiva.",
+      "buttonText": "Ver Papelaria",
+      "category": "papelaria",
+      "image": "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=700&q=80"
+    },
+    {
+      "kicker": "Performance sem esforÃ§o",
+      "title": "InformÃ¡tica\nna medida certa",
+      "text": "Mouses, teclados e headsets pra deixar sua rotina â€” ou seu setup gamer â€” no prÃ³ximo nÃ­vel.",
+      "buttonText": "Ver InformÃ¡tica",
+      "category": "informatica",
+      "image": "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=700&q=80"
+    },
+    {
+      "kicker": "Sua casa, sempre vigiada",
+      "title": "SeguranÃ§a\nque dÃ¡ paz",
+      "text": "CÃ¢meras inteligentes com monitoramento em tempo real, direto do seu celular.",
+      "buttonText": "Ver CÃ¢meras",
+      "category": "cameras",
+      "image": "https://images.unsplash.com/photo-1557324232-b8917d3c3dcb?auto=format&fit=crop&w=700&q=80"
+    }
+  ]
+}

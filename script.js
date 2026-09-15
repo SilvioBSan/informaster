@@ -1,8 +1,8 @@
-// --- Configuração do EmailJS (e-mail de confirmação de pedido) ---
-// 1. Crie uma conta grátis em https://www.emailjs.com (200 e-mails/mês no plano free)
+﻿// --- ConfiguraÃ§Ã£o do EmailJS (e-mail de confirmaÃ§Ã£o de pedido) ---
+// 1. Crie uma conta grÃ¡tis em https://www.emailjs.com (200 e-mails/mÃªs no plano free)
 // 2. Em "Email Services", conecte seu e-mail (Gmail, Outlook, etc.) e copie o SERVICE_ID
-// 3. Em "Email Templates", crie um modelo usando as variáveis {{to_name}}, {{to_email}},
-//    {{order_number}}, {{order_items}}, {{order_total}}, {{order_address}} — e copie o TEMPLATE_ID
+// 3. Em "Email Templates", crie um modelo usando as variÃ¡veis {{to_name}}, {{to_email}},
+//    {{order_number}}, {{order_items}}, {{order_total}}, {{order_address}} â€” e copie o TEMPLATE_ID
 // 4. Em "Account" > "General", copie sua PUBLIC_KEY
 // 5. Cole os 3 valores abaixo, entre aspas, no lugar de "COLE_AQUI..."
 const EMAILJS_SERVICE_ID = 'COLE_AQUI_SEU_SERVICE_ID';
@@ -15,95 +15,62 @@ if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY.indexOf('COLE_AQUI') ==
 
 function sendOrderConfirmationEmail(orderData) {
     if (typeof emailjs === 'undefined' || EMAILJS_PUBLIC_KEY.indexOf('COLE_AQUI') !== -1) {
-        console.warn('EmailJS não configurado ainda — e-mail de confirmação não foi enviado. Veja as instruções no topo do script.js.');
+        console.warn('EmailJS nÃ£o configurado ainda â€” e-mail de confirmaÃ§Ã£o nÃ£o foi enviado. Veja as instruÃ§Ãµes no topo do script.js.');
         return;
     }
 
     emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, orderData)
         .then(() => {
-            showToast('E-mail de confirmação enviado!');
+            showToast('E-mail de confirmaÃ§Ã£o enviado!');
         })
         .catch((error) => {
-            console.error('Falha ao enviar e-mail de confirmação:', error);
-            showToast('Pedido confirmado, mas o e-mail não pôde ser enviado.');
+            console.error('Falha ao enviar e-mail de confirmaÃ§Ã£o:', error);
+            showToast('Pedido confirmado, mas o e-mail nÃ£o pÃ´de ser enviado.');
         });
 }
 
 // --- Base de Dados dos Produtos ---
-const products = [
-    // Agendas
-    { id: 1, title: "Agenda 2027 Executiva Capa Dura", category: "agendas", price: 59.90, image: "https://images.unsplash.com/photo-1517971071642-34a2d3ecc9cd?auto=format&fit=crop&w=600&q=80" },
-    { id: 2, title: "Agenda Permanente Espiral Floral", category: "agendas", price: 42.90, image: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?auto=format&fit=crop&w=600&q=80" },
+// Antes, os produtos ficavam fixos aqui como um array no cÃ³digo.
+// Agora eles moram em products.json e sÃ£o carregados via fetch, para que o
+// painel administrativo em /admin (Decap CMS) possa editÃ¡-los sem tocar em cÃ³digo.
+let products = [];
 
-    // Cadernos
-    { id: 3, title: "Caderno Universitário Espiral 10 Matérias", category: "cadernos", price: 34.90, image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=600&q=80" },
-    { id: 4, title: "Caderno Inteligente Recarregável", category: "cadernos", price: 79.90, image: "https://images.unsplash.com/photo-1531346680769-a1d79b57de5c?auto=format&fit=crop&w=600&q=80" },
+async function loadProducts() {
+    try {
+        const response = await fetch('products.json', { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        // O painel /admin salva o arquivo como { "produtos": [...] }.
+        // Se vocÃª mantiver o products.json como array puro (sem usar o painel
+        // para essa ediÃ§Ã£o), este fallback tambÃ©m funciona.
+        products = Array.isArray(data) ? data : (data.produtos || []);
+    } catch (error) {
+        console.error('NÃ£o foi possÃ­vel carregar products.json:', error);
+        products = [];
+    }
+}
 
-    // Canetas & Lápis
-    { id: 5, title: "Caneta Gel Premium Ponta Fina 0.5mm", category: "canetas", price: 12.50, image: "https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?auto=format&fit=crop&w=600&q=80" },
-    { id: 6, title: "Kit 12 Canetas Coloridas Ponta Fina", category: "canetas", price: 29.90, image: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?auto=format&fit=crop&w=600&q=80" },
-
-    // Borrachas & Apontadores
-    { id: 7, title: "Kit Borracha + Apontador com Depósito", category: "borrachas", price: 9.90, image: "https://images.unsplash.com/photo-1568205612837-017257d2310a?auto=format&fit=crop&w=600&q=80" },
-    { id: 8, title: "Lapiseira 0.7mm Profissional", category: "borrachas", price: 14.90, image: "https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=600&q=80" },
-
-    // Escolar
-    { id: 9, title: "Kit Réguas e Esquadros Escolar", category: "escolar", price: 19.90, image: "https://images.unsplash.com/photo-1588075592446-265fd1e6e76f?auto=format&fit=crop&w=600&q=80" },
-    { id: 10, title: "Mochila Escolar Reforçada", category: "escolar", price: 129.90, image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=600&q=80" },
-
-    // Escritório
-    { id: 11, title: "Organizador de Mesa Metálico Minimalista", category: "escritorio", price: 49.90, image: "https://images.unsplash.com/photo-1585336261022-6fc0e7915a2a?auto=format&fit=crop&w=600&q=80" },
-    { id: 12, title: "Grampeador de Mesa Profissional", category: "escritorio", price: 24.90, image: "https://images.unsplash.com/photo-1497032628192-86f99bcd76bc?auto=format&fit=crop&w=600&q=80" },
-
-    // Linha Fofa
-    { id: 13, title: "Caderno Capa Dura Ursinho Fofo", category: "linha-fofa", price: 47.90, image: "https://images.unsplash.com/photo-1519222970733-f546218fa6d7?auto=format&fit=crop&w=600&q=80" },
-    { id: 14, title: "Estojo Pelúcia Unicórnio", category: "linha-fofa", price: 54.90, image: "https://images.unsplash.com/photo-1584824388878-9b073b07e5f9?auto=format&fit=crop&w=600&q=80" },
-
-    // Kits & Presentes
-    { id: 15, title: "Kit Volta às Aulas Completo", category: "kits", price: 149.90, image: "https://images.unsplash.com/photo-1588072432836-e10032774350?auto=format&fit=crop&w=600&q=80" },
-    { id: 16, title: "Kit Presente Papelaria Premium", category: "kits", price: 89.90, image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=600&q=80" },
-
-    // Criativo
-    { id: 17, title: "Massa de Modelar Kit 12 Cores", category: "criativo", price: 32.90, image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=600&q=80" },
-    { id: 18, title: "Tinta Guache 6 Cores 15ml", category: "criativo", price: 18.90, image: "https://images.unsplash.com/photo-1502773860571-211a597d6e4b?auto=format&fit=crop&w=600&q=80" },
-
-    // Gamer
-    { id: 19, title: "Teclado Mecânico Gamer RGB Switch Brown", category: "gamer", price: 289.00, image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?auto=format&fit=crop&w=600&q=80" },
-    { id: 20, title: "Headset Gamer Surround 7.1 com Microfone", category: "gamer", price: 199.90, image: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=600&q=80" },
-    { id: 21, title: "Mousepad Gamer Extra Grande", category: "gamer", price: 39.90, image: "https://images.unsplash.com/photo-1547082299-de196ea013d6?auto=format&fit=crop&w=600&q=80" },
-
-    // Informática
-    { id: 22, title: "Mouse Sem Fio Ergonômico Bluetooth", category: "informatica", price: 89.90, image: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=600&q=80" },
-    { id: 23, title: "Pen Drive 64GB USB 3.0", category: "informatica", price: 34.90, image: "https://images.unsplash.com/photo-1618410320928-25228d811631?auto=format&fit=crop&w=600&q=80" },
-    { id: 24, title: "Cabo HDMI 2.0 - 2 Metros", category: "informatica", price: 19.90, image: "https://images.unsplash.com/photo-1585790050230-5dd28404ccb9?auto=format&fit=crop&w=600&q=80" },
-
-    // Câmeras & Segurança
-    { id: 25, title: "Câmera Wi-Fi Inteligente Interna 360° HD", category: "cameras", price: 219.90, image: "https://images.unsplash.com/photo-1557324232-b8917d3c3dcb?auto=format&fit=crop&w=600&q=80" },
-    { id: 26, title: "Câmera de Segurança Externa Full HD IP66", category: "cameras", price: 279.00, image: "https://images.unsplash.com/photo-1585776245991-cf89dd7fc73a?auto=format&fit=crop&w=600&q=80" },
-    { id: 27, title: "Kit 4 Câmeras + DVR Monitoramento Completo", category: "cameras", price: 899.90, image: "https://images.unsplash.com/photo-1557324232-b8917d3c3dcb?auto=format&fit=crop&w=600&q=80" }
-];
-
-// Nome de exibição de cada categoria (usado na etiqueta do card e no título da seção)
+// Nome de exibiÃ§Ã£o de cada categoria (usado na etiqueta do card e no tÃ­tulo da seÃ§Ã£o)
 const CATEGORY_TITLES = {
     all: 'Nossos Produtos',
     papelaria: 'Papelaria',
     agendas: 'Agendas',
     cadernos: 'Cadernos',
-    canetas: 'Canetas & Lápis',
+    canetas: 'Canetas & LÃ¡pis',
     borrachas: 'Borrachas & Apontadores',
     escolar: 'Material Escolar',
-    escritorio: 'Escritório',
+    escritorio: 'EscritÃ³rio',
     'linha-fofa': 'Linha Fofa',
     kits: 'Kits & Presentes',
-    criativo: 'Criativo & Artístico',
+    criativo: 'Criativo & ArtÃ­stico',
     gamer: 'Gamer',
-    informatica: 'Informática',
-    cameras: 'Câmeras & Segurança'
+    informatica: 'InformÃ¡tica',
+    cameras: 'CÃ¢meras & SeguranÃ§a'
 };
 
-// Grupos "guarda-chuva" — usados pelos botões do hero e pelo rodapé,
-// que filtram várias categorias de uma vez (ex: "Papelaria" reúne
-// agendas, cadernos, canetas etc. de uma só vez)
+// Grupos "guarda-chuva" â€” usados pelos botÃµes do hero e pelo rodapÃ©,
+// que filtram vÃ¡rias categorias de uma vez (ex: "Papelaria" reÃºne
+// agendas, cadernos, canetas etc. de uma sÃ³ vez)
 const CATEGORY_GROUPS = {
     papelaria: ['agendas', 'cadernos', 'canetas', 'borrachas', 'escolar', 'escritorio', 'linha-fofa', 'kits', 'criativo'],
     informatica: ['informatica'],
@@ -117,7 +84,7 @@ function getProductsForCategory(category) {
     return products.filter(p => p.category === category);
 }
 
-// --- Helpers de vitrine (parcelamento, estoque simulado, ordenação) ---
+// --- Helpers de vitrine (parcelamento, estoque simulado, ordenaÃ§Ã£o) ---
 const FREE_SHIPPING_THRESHOLD = 150;
 
 function installmentText(price) {
@@ -125,21 +92,22 @@ function installmentText(price) {
     return `ou 3x de R$ ${parcela.toFixed(2).replace('.', ',')} sem juros`;
 }
 
-// Estoque simulado de forma determinística (troque por dado real do seu
-// sistema de gestão/ERP quando integrar um backend de verdade)
+// Estoque simulado de forma determinÃ­stica (troque por dado real do seu
+// sistema de gestÃ£o/ERP quando integrar um backend de verdade)
 function getStock(product) {
     return (product.id * 7) % 14 + 1;
 }
 
 function stockBadgeHTML(stock) {
     if (stock <= 3) {
-        return `<span class="stock-badge low"><i class="fa-solid fa-circle"></i> Últimas ${stock} unidades</span>`;
+        return `<span class="stock-badge low"><i class="fa-solid fa-circle"></i> Ãšltimas ${stock} unidades</span>`;
     }
     return `<span class="stock-badge ok"><i class="fa-solid fa-circle"></i> Em estoque</span>`;
 }
 
 function genericDescription(product) {
-    return `${product.title}. Produto original InforMaster, com garantia da loja e suporte da nossa equipe em Ilhéus/BA.`;
+    if (product.description && product.description.trim()) return product.description;
+    return `${product.title}. Produto original InforMaster, com garantia da loja e suporte da nossa equipe em IlhÃ©us/BA.`;
 }
 
 function sortProducts(list, sortBy) {
@@ -150,7 +118,7 @@ function sortProducts(list, sortBy) {
     return sorted;
 }
 
-// Estado atual da vitrine (categoria + busca + ordenação)
+// Estado atual da vitrine (categoria + busca + ordenaÃ§Ã£o)
 let currentCategory = 'all';
 let currentSearchTerm = '';
 let currentSort = 'relevance';
@@ -164,7 +132,7 @@ function applyFiltersAndRender() {
     renderProducts(list);
 }
 
-// --- Toasts (notificação de "adicionado ao carrinho") ---
+// --- Toasts (notificaÃ§Ã£o de "adicionado ao carrinho") ---
 function showToast(message) {
     const container = document.getElementById('toastContainer');
     const toast = document.createElement('div');
@@ -178,7 +146,7 @@ function showToast(message) {
     }, 3000);
 }
 
-// --- Persistência do carrinho (localStorage) ---
+// --- PersistÃªncia do carrinho (localStorage) ---
 function saveCartToStorage() {
     localStorage.setItem('informaster_cart', JSON.stringify(cart));
 }
@@ -195,31 +163,79 @@ function loadCartFromStorage() {
 
 // --- Hero Carrossel ---
 const heroTrack = document.getElementById('heroTrack');
-const heroSlides = document.querySelectorAll('.hero-slide');
+const heroCarouselEl = document.getElementById('heroCarousel');
 const heroPrev = document.getElementById('heroPrev');
 const heroNext = document.getElementById('heroNext');
 const heroDotsContainer = document.getElementById('heroDots');
+let heroSlides = [];
+let heroDots = [];
 let heroIndex = 0;
 let heroAutoplay;
 
-heroSlides.forEach((_, i) => {
-    const dot = document.createElement('button');
-    dot.classList.add('hero-dot');
-    if (i === 0) dot.classList.add('active');
-    dot.setAttribute('aria-label', `Ir para slide ${i + 1}`);
-    dot.addEventListener('click', () => goToHeroSlide(i));
-    heroDotsContainer.appendChild(dot);
-});
-const heroDots = document.querySelectorAll('.hero-dot');
+async function loadHero() {
+    try {
+        const response = await fetch('hero.json', { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        renderHero(data.slides || []);
+    } catch (error) {
+        console.error('NÃ£o foi possÃ­vel carregar hero.json:', error);
+    }
+}
+
+function renderHero(slides) {
+    heroTrack.innerHTML = '';
+    heroDotsContainer.innerHTML = '';
+
+    slides.forEach((slide) => {
+        const slideEl = document.createElement('div');
+        slideEl.classList.add('hero-slide');
+        slideEl.innerHTML = `
+            <div class="hero-decor">
+                <span class="star star-1">âœ¦</span>
+                <span class="star star-2">â˜…</span>
+                <span class="star star-3">âœ§</span>
+            </div>
+            <div class="hero-text">
+                <span class="hero-kicker">${slide.kicker || ''}</span>
+                <h1>${(slide.title || '').replace(/\n/g, '<br>')}</h1>
+                <p>${slide.text || ''}</p>
+                <button class="hero-cta" onclick="filterFromHero('${slide.category || 'all'}')">${slide.buttonText || 'Ver mais'}</button>
+            </div>
+            <div class="hero-image">
+                <img src="${slide.image || ''}" alt="${slide.title || ''}">
+            </div>
+        `;
+        heroTrack.appendChild(slideEl);
+    });
+
+    heroSlides = document.querySelectorAll('.hero-slide');
+
+    heroSlides.forEach((_, i) => {
+        const dot = document.createElement('button');
+        dot.classList.add('hero-dot');
+        if (i === 0) dot.classList.add('active');
+        dot.setAttribute('aria-label', `Ir para slide ${i + 1}`);
+        dot.addEventListener('click', () => goToHeroSlide(i));
+        heroDotsContainer.appendChild(dot);
+    });
+    heroDots = document.querySelectorAll('.hero-dot');
+
+    heroIndex = 0;
+    goToHeroSlide(0);
+    if (heroSlides.length > 1) startHeroAutoplay();
+}
 
 function goToHeroSlide(index) {
+    if (heroSlides.length === 0) return;
     heroIndex = (index + heroSlides.length) % heroSlides.length;
     heroTrack.style.transform = `translateX(-${heroIndex * 100}%)`;
     heroDots.forEach(d => d.classList.remove('active'));
-    heroDots[heroIndex].classList.add('active');
+    if (heroDots[heroIndex]) heroDots[heroIndex].classList.add('active');
 }
 
 function startHeroAutoplay() {
+    clearInterval(heroAutoplay);
     heroAutoplay = setInterval(() => goToHeroSlide(heroIndex + 1), 6000);
 }
 
@@ -229,11 +245,10 @@ function stopHeroAutoplay() {
 
 heroNext.addEventListener('click', () => { goToHeroSlide(heroIndex + 1); stopHeroAutoplay(); startHeroAutoplay(); });
 heroPrev.addEventListener('click', () => { goToHeroSlide(heroIndex - 1); stopHeroAutoplay(); startHeroAutoplay(); });
-document.getElementById('heroCarousel').addEventListener('mouseenter', stopHeroAutoplay);
-document.getElementById('heroCarousel').addEventListener('mouseleave', startHeroAutoplay);
-startHeroAutoplay();
+heroCarouselEl.addEventListener('mouseenter', stopHeroAutoplay);
+heroCarouselEl.addEventListener('mouseleave', startHeroAutoplay);
 
-// Leva o clique no botão do hero (ou nos links do rodapé) direto pra categoria filtrada na vitrine
+// Leva o clique no botÃ£o do hero (ou nos links do rodapÃ©) direto pra categoria filtrada na vitrine
 function filterFromHero(category) {
     tabBtns.forEach(b => b.classList.remove('active'));
     const matchingTab = document.querySelector(`.tab-btn[data-category="${category}"]`);
@@ -276,7 +291,7 @@ const finishSuccessBtn = document.getElementById('finishSuccessBtn');
 // --- Renderizar Produtos ---
 function renderProducts(productsToRender) {
     productsGrid.innerHTML = '';
-    
+
     if (productsToRender.length === 0) {
         productsGrid.innerHTML = `<p class="no-products-msg">Nenhum produto encontrado.</p>`;
         return;
@@ -285,7 +300,7 @@ function renderProducts(productsToRender) {
     productsToRender.forEach(product => {
         const card = document.createElement('div');
         card.classList.add('product-card');
-        
+
         card.innerHTML = `
             <div class="product-image-container" onclick="openQuickView(${product.id})">
                 <span class="product-tag">${CATEGORY_TITLES[product.category] || ''}</span>
@@ -307,7 +322,7 @@ function renderProducts(productsToRender) {
     });
 }
 
-// --- Funções do Carrinho ---
+// --- FunÃ§Ãµes do Carrinho ---
 function addToCart(productId, quantity = 1) {
     const product = products.find(p => p.id === productId);
     const existingItem = cart.find(item => item.id === productId);
@@ -341,13 +356,13 @@ function updateQuantity(productId, change) {
 }
 
 function updateCartUI() {
-    // Atualizar contador do ícone
+    // Atualizar contador do Ã­cone
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
     cartCount.textContent = totalItems;
 
     // Renderizar itens no sidebar
     if (cart.length === 0) {
-        cartItemsContainer.innerHTML = `<p class="empty-cart-msg">Seu carrinho está vazio.</p>`;
+        cartItemsContainer.innerHTML = `<p class="empty-cart-msg">Seu carrinho estÃ¡ vazio.</p>`;
         checkoutBtn.disabled = true;
     } else {
         cartItemsContainer.innerHTML = '';
@@ -356,7 +371,7 @@ function updateCartUI() {
         cart.forEach(item => {
             const cartItemEl = document.createElement('div');
             cartItemEl.classList.add('cart-item');
-            
+
             cartItemEl.innerHTML = `
                 <img src="${item.image}" alt="${item.title}">
                 <div class="cart-item-details">
@@ -381,18 +396,18 @@ function updateCartUI() {
     const totalPrice = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     cartTotal.textContent = `R$ ${totalPrice.toFixed(2).replace('.', ',')}`;
 
-    // Barra de frete grátis
+    // Barra de frete grÃ¡tis
     const fsText = document.getElementById('freeShippingText');
     const fsFill = document.getElementById('freeShippingFill');
     if (cart.length === 0) {
-        fsText.textContent = `Frete grátis a partir de R$ ${FREE_SHIPPING_THRESHOLD.toFixed(2).replace('.', ',')}`;
+        fsText.textContent = `Frete grÃ¡tis a partir de R$ ${FREE_SHIPPING_THRESHOLD.toFixed(2).replace('.', ',')}`;
         fsFill.style.width = '0%';
     } else if (totalPrice < FREE_SHIPPING_THRESHOLD) {
         const remaining = FREE_SHIPPING_THRESHOLD - totalPrice;
-        fsText.innerHTML = `Faltam <strong>R$ ${remaining.toFixed(2).replace('.', ',')}</strong> para frete grátis`;
+        fsText.innerHTML = `Faltam <strong>R$ ${remaining.toFixed(2).replace('.', ',')}</strong> para frete grÃ¡tis`;
         fsFill.style.width = `${(totalPrice / FREE_SHIPPING_THRESHOLD) * 100}%`;
     } else {
-        fsText.innerHTML = `<i class="fa-solid fa-truck-fast"></i> Você ganhou frete grátis!`;
+        fsText.innerHTML = `<i class="fa-solid fa-truck-fast"></i> VocÃª ganhou frete grÃ¡tis!`;
         fsFill.style.width = '100%';
     }
 
@@ -418,7 +433,7 @@ overlay.addEventListener('click', () => {
     closeAllModals();
 });
 
-// Busca retrátil (mobile): o ícone de lupa abre/fecha o campo de busca
+// Busca retrÃ¡til (mobile): o Ã­cone de lupa abre/fecha o campo de busca
 if (searchToggleBtn) {
     searchToggleBtn.addEventListener('click', () => {
         searchBar.classList.toggle('open');
@@ -428,7 +443,7 @@ if (searchToggleBtn) {
     });
 }
 
-// --- Filtragem, Busca e Ordenação ---
+// --- Filtragem, Busca e OrdenaÃ§Ã£o ---
 tabBtns.forEach(btn => {
     btn.addEventListener('click', (e) => {
         tabBtns.forEach(b => b.classList.remove('active'));
@@ -451,7 +466,7 @@ sortSelect.addEventListener('change', (e) => {
     applyFiltersAndRender();
 });
 
-// --- Visualização Rápida do Produto ---
+// --- VisualizaÃ§Ã£o RÃ¡pida do Produto ---
 const quickViewModal = document.getElementById('quickViewModal');
 const closeQuickView = document.getElementById('closeQuickView');
 let qvCurrentId = null;
@@ -556,7 +571,7 @@ function validateCardFieldsIfNeeded() {
         const el = document.getElementById(id);
         if (!el.value.trim()) {
             el.focus();
-            showToast('Preencha os dados do cartão para continuar');
+            showToast('Preencha os dados do cartÃ£o para continuar');
             return false;
         }
     }
@@ -596,23 +611,23 @@ function renderReview() {
     const state = document.getElementById('state').value;
     const cepValue = document.getElementById('cep').value;
     document.getElementById('reviewAddress').textContent =
-        `${street}, ${number}${complement ? ' - ' + complement : ''} — ${neighborhood}, ${city}/${state} — CEP ${cepValue}`;
+        `${street}, ${number}${complement ? ' - ' + complement : ''} â€” ${neighborhood}, ${city}/${state} â€” CEP ${cepValue}`;
 
     const method = getSelectedPaymentMethod();
     let paymentLabel;
     if (method === 'cartao') {
         const last4 = document.getElementById('cardNumber').value.replace(/\D/g, '').slice(-4);
         const installments = document.getElementById('installments').value;
-        paymentLabel = `Cartão de crédito terminando em ${last4 || '----'}, em ${installments}x`;
+        paymentLabel = `CartÃ£o de crÃ©dito terminando em ${last4 || '----'}, em ${installments}x`;
     } else if (method === 'pix') {
-        paymentLabel = 'Pix (código gerado após a confirmação)';
+        paymentLabel = 'Pix (cÃ³digo gerado apÃ³s a confirmaÃ§Ã£o)';
     } else {
-        paymentLabel = 'Boleto bancário (vencimento em 3 dias úteis)';
+        paymentLabel = 'Boleto bancÃ¡rio (vencimento em 3 dias Ãºteis)';
     }
     document.getElementById('reviewPayment').textContent = paymentLabel;
 
     document.getElementById('reviewSubtotal').textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
-    document.getElementById('reviewShipping').textContent = shipping === 0 ? 'Grátis' : `R$ ${shipping.toFixed(2).replace('.', ',')}`;
+    document.getElementById('reviewShipping').textContent = shipping === 0 ? 'GrÃ¡tis' : `R$ ${shipping.toFixed(2).replace('.', ',')}`;
     document.getElementById('reviewTotal').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
 }
 
@@ -624,14 +639,14 @@ function confirmOrder() {
     const shipping = getShippingCost(subtotal);
     const total = subtotal + shipping;
 
-    const itemsText = cart.map(item => `${item.quantity}x ${item.title} — R$ ${(item.price * item.quantity).toFixed(2).replace('.', ',')}`).join('\n');
+    const itemsText = cart.map(item => `${item.quantity}x ${item.title} â€” R$ ${(item.price * item.quantity).toFixed(2).replace('.', ',')}`).join('\n');
     const street = document.getElementById('street').value;
     const number = document.getElementById('number').value;
     const complement = document.getElementById('complement').value;
     const neighborhood = document.getElementById('neighborhood').value;
     const city = document.getElementById('city').value;
     const state = document.getElementById('state').value;
-    const addressText = `${street}, ${number}${complement ? ' - ' + complement : ''} — ${neighborhood}, ${city}/${state}`;
+    const addressText = `${street}, ${number}${complement ? ' - ' + complement : ''} â€” ${neighborhood}, ${city}/${state}`;
 
     sendOrderConfirmationEmail({
         to_name: document.getElementById('name').value,
@@ -652,7 +667,7 @@ function confirmOrder() {
     updateCheckoutStepUI();
 }
 
-// Abas de forma de pagamento (Cartão / Pix / Boleto)
+// Abas de forma de pagamento (CartÃ£o / Pix / Boleto)
 document.querySelectorAll('.payment-tab').forEach(tab => {
     tab.addEventListener('click', () => {
         document.querySelectorAll('.payment-tab').forEach(t => t.classList.remove('active'));
@@ -662,7 +677,7 @@ document.querySelectorAll('.payment-tab').forEach(tab => {
     });
 });
 
-// Máscaras dos campos de cartão
+// MÃ¡scaras dos campos de cartÃ£o
 const cardNumberInput = document.getElementById('cardNumber');
 if (cardNumberInput) {
     cardNumberInput.addEventListener('input', (e) => {
@@ -685,7 +700,7 @@ if (cardCvvInput) {
     });
 }
 
-// CEP: máscara + busca automática de endereço (ViaCEP, API pública gratuita)
+// CEP: mÃ¡scara + busca automÃ¡tica de endereÃ§o (ViaCEP, API pÃºblica gratuita)
 const cepInput = document.getElementById('cep');
 const cepStatus = document.getElementById('cepStatus');
 if (cepInput) {
@@ -702,23 +717,23 @@ if (cepInput) {
     cepInput.addEventListener('blur', () => {
         const digits = cepInput.value.replace(/\D/g, '');
         if (digits.length !== 8) return;
-        cepStatus.textContent = 'Buscando endereço...';
+        cepStatus.textContent = 'Buscando endereÃ§o...';
         fetch(`https://viacep.com.br/ws/${digits}/json/`)
             .then(res => res.json())
             .then(data => {
                 if (data.erro) {
-                    cepStatus.textContent = 'CEP não encontrado — preencha manualmente';
+                    cepStatus.textContent = 'CEP nÃ£o encontrado â€” preencha manualmente';
                     return;
                 }
                 document.getElementById('street').value = data.logradouro || '';
                 document.getElementById('neighborhood').value = data.bairro || '';
                 document.getElementById('city').value = data.localidade || '';
                 document.getElementById('state').value = data.uf || '';
-                cepStatus.textContent = 'Endereço encontrado!';
+                cepStatus.textContent = 'EndereÃ§o encontrado!';
                 document.getElementById('number').focus();
             })
             .catch(() => {
-                cepStatus.textContent = 'Não foi possível buscar o CEP agora — preencha manualmente';
+                cepStatus.textContent = 'NÃ£o foi possÃ­vel buscar o CEP agora â€” preencha manualmente';
             });
     });
 }
@@ -764,7 +779,7 @@ finishSuccessBtn.addEventListener('click', () => {
     overlay.classList.remove('active');
 });
 
-// Links de categoria no rodapé também usam o filtro
+// Links de categoria no rodapÃ© tambÃ©m usam o filtro
 document.querySelectorAll('.footer-cat-link').forEach(link => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
@@ -773,8 +788,9 @@ document.querySelectorAll('.footer-cat-link').forEach(link => {
     });
 });
 
-// Inicializar a loja exibindo todos os produtos e o carrinho salvo
-document.addEventListener('DOMContentLoaded', () => {
+// Inicializar a loja: carrega products.json e hero.json, sÃ³ entÃ£o renderiza
+document.addEventListener('DOMContentLoaded', async () => {
+    await Promise.all([loadProducts(), loadHero()]);
     applyFiltersAndRender();
     updateCartUI();
 });

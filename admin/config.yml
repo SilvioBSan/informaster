@@ -1,25 +1,25 @@
-# Configuração do painel administrativo (Decap CMS)
-# Documentação completa: https://decapcms.org/docs/configuration-options/
+﻿# ConfiguraÃ§Ã£o do painel administrativo (Decap CMS)
+# DocumentaÃ§Ã£o completa: https://decapcms.org/docs/configuration-options/
 
 backend:
   name: git-gateway
   branch: main                        # <-- troque se sua branch principal tiver outro nome
 
-# Onde o CMS salva as imagens enviadas pelo formulário
-media_folder: "images/uploads"   # pasta dentro do repositório
+# Onde o CMS salva as imagens enviadas pelo formulÃ¡rio
+media_folder: "images/uploads"   # pasta dentro do repositÃ³rio
 public_folder: "images/uploads"  # caminho usado no <img src="..."> gerado
 
-# Ativa o modo "Editorial Workflow": toda alteração vira um rascunho
-# revisável antes de ir pro site no ar. Se preferir que publique na hora,
+# Ativa o modo "Editorial Workflow": toda alteraÃ§Ã£o vira um rascunho
+# revisÃ¡vel antes de ir pro site no ar. Se preferir que publique na hora,
 # pode remover esta linha.
 publish_mode: editorial_workflow
 
-# Como todos os produtos vivem juntos em um único products.json (um array),
-# usamos uma coleção do tipo "files": um arquivo só, e cada item do array
-# vira uma entrada editável na lista dentro do painel.
+# Como todos os produtos vivem juntos em um Ãºnico products.json (um array),
+# usamos uma coleÃ§Ã£o do tipo "files": um arquivo sÃ³, e cada item do array
+# vira uma entrada editÃ¡vel na lista dentro do painel.
 collections:
   - name: "produtos"
-    label: "Catálogo de Produtos"
+    label: "CatÃ¡logo de Produtos"
     files:
       - name: "catalogo"
         label: "Todos os Produtos"
@@ -29,9 +29,9 @@ collections:
           - label: "Produtos"
             name: "produtos"
             widget: "list"
-            summary: "{{fields.title}} — {{fields.category}}"
+            summary: "{{fields.title}} â€” {{fields.category}}"
             fields:
-              - { label: "ID", name: "id", widget: "number", value_type: "int", hint: "Não repita um ID já usado por outro produto." }
+              - { label: "ID", name: "id", widget: "number", value_type: "int", hint: "NÃ£o repita um ID jÃ¡ usado por outro produto." }
               - { label: "Nome do Produto", name: "title", widget: "string" }
               - label: "Categoria"
                 name: "category"
@@ -39,15 +39,47 @@ collections:
                 options:
                   - { label: "Agendas", value: "agendas" }
                   - { label: "Cadernos", value: "cadernos" }
-                  - { label: "Canetas & Lápis", value: "canetas" }
+                  - { label: "Canetas & LÃ¡pis", value: "canetas" }
                   - { label: "Borrachas & Apontadores", value: "borrachas" }
                   - { label: "Escolar", value: "escolar" }
-                  - { label: "Escritório", value: "escritorio" }
+                  - { label: "EscritÃ³rio", value: "escritorio" }
                   - { label: "Linha Fofa", value: "linha-fofa" }
                   - { label: "Kits & Presentes", value: "kits" }
                   - { label: "Criativo", value: "criativo" }
                   - { label: "Gamer", value: "gamer" }
-                  - { label: "Informática", value: "informatica" }
-                  - { label: "Câmeras", value: "cameras" }
-              - { label: "Preço (R$)", name: "price", widget: "number", value_type: "float" }
+                  - { label: "InformÃ¡tica", value: "informatica" }
+                  - { label: "CÃ¢meras", value: "cameras" }
+              - { label: "PreÃ§o (R$)", name: "price", widget: "number", value_type: "float" }
               - { label: "Foto do Produto", name: "image", widget: "image", hint: "Clique ou arraste a foto aqui. Recomendado: fundo branco, quadrada." }
+              - { label: "DescriÃ§Ã£o", name: "description", widget: "text", required: false, hint: "Se deixar em branco, o site mostra uma frase genÃ©rica automÃ¡tica." }
+
+  - name: "hero"
+    label: "Banner Principal (Topo do Site)"
+    files:
+      - name: "slides"
+        label: "Slides do Banner"
+        file: "hero.json"
+        format: "json"
+        fields:
+          - label: "Slides"
+            name: "slides"
+            widget: "list"
+            summary: "{{fields.title}}"
+            min: 1
+            max: 5
+            fields:
+              - { label: "Chamada pequena (acima do tÃ­tulo)", name: "kicker", widget: "string" }
+              - { label: "TÃ­tulo", name: "title", widget: "string", hint: "Pode usar uma quebra de linha digitando \\n" }
+              - { label: "Texto", name: "text", widget: "text" }
+              - { label: "Texto do BotÃ£o", name: "buttonText", widget: "string", default: "Ver mais" }
+              - label: "Categoria do BotÃ£o"
+                name: "category"
+                widget: "select"
+                hint: "Pra onde o botÃ£o leva quando clicado"
+                options:
+                  - { label: "Papelaria", value: "papelaria" }
+                  - { label: "InformÃ¡tica", value: "informatica" }
+                  - { label: "Gamer", value: "gamer" }
+                  - { label: "CÃ¢meras", value: "cameras" }
+                  - { label: "Todos os Produtos", value: "all" }
+              - { label: "Foto de Fundo", name: "image", widget: "image" }

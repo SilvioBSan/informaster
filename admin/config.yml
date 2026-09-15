@@ -2,8 +2,7 @@
 # Documentação completa: https://decapcms.org/docs/configuration-options/
 
 backend:
-  name: github
-  repo: SilvioBSan/informaster
+  name: git-gateway
   branch: main                        # <-- troque se sua branch principal tiver outro nome
 
 # Onde o CMS salva as imagens enviadas pelo formulário

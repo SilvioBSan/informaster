@@ -8,13 +8,18 @@
     <meta property="og:title" content="InforMaster Loja — Papelaria, Informática e Segurança">
     <meta property="og:description" content="Cadernos, agendas, acessórios de informática e câmeras de segurança, com 20 anos de tradição em Ilhéus/BA.">
     <meta property="og:type" content="website">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' https: data:; connect-src 'self' https://viacep.com.br https://api.emailjs.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://identity.netlify.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' https: data:; connect-src 'self' https://viacep.com.br https://api.emailjs.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- EmailJS (envio de e-mail de confirmação de pedido direto do navegador, sem backend) -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <!-- Netlify Identity Widget: necessário para que os links de convite e de
+         "esqueci minha senha" do painel /admin funcionem quando abertos na
+         página principal do site (fora do /admin). Sem isso, o link de
+         convite carrega o site normalmente e não abre a tela de criar senha. -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <!-- Arquivo CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
@@ -445,6 +450,20 @@
     <a href="https://wa.me/557388594003" target="_blank" rel="noopener" class="floating-whatsapp" aria-label="Fale conosco no WhatsApp">
         <i class="fa-brands fa-whatsapp"></i>
     </a>
+
+    <!-- Inicializa o widget do Netlify Identity e trata os links de convite / redefinição de senha
+         que chegam por e-mail apontando para a raiz do site (ex: #invite_token=..., #recovery_token=...) -->
+    <script>
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on('init', user => {
+                if (!user) {
+                    window.netlifyIdentity.on('login', () => {
+                        document.location.href = '/admin/';
+                    });
+                }
+            });
+        }
+    </script>
 
     <!-- Arquivo JavaScript -->
     <script src="script.js"></script>

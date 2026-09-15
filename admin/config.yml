@@ -1,0 +1,54 @@
+# Configuração do painel administrativo (Decap CMS)
+# Documentação completa: https://decapcms.org/docs/configuration-options/
+
+backend:
+  name: github
+  repo: SilvioBSan/informaster
+  branch: main                        # <-- troque se sua branch principal tiver outro nome
+
+# Onde o CMS salva as imagens enviadas pelo formulário
+media_folder: "images/uploads"   # pasta dentro do repositório
+public_folder: "images/uploads"  # caminho usado no <img src="..."> gerado
+
+# Ativa o modo "Editorial Workflow": toda alteração vira um rascunho
+# revisável antes de ir pro site no ar. Se preferir que publique na hora,
+# pode remover esta linha.
+publish_mode: editorial_workflow
+
+# Como todos os produtos vivem juntos em um único products.json (um array),
+# usamos uma coleção do tipo "files": um arquivo só, e cada item do array
+# vira uma entrada editável na lista dentro do painel.
+collections:
+  - name: "produtos"
+    label: "Catálogo de Produtos"
+    files:
+      - name: "catalogo"
+        label: "Todos os Produtos"
+        file: "products.json"
+        format: "json"
+        fields:
+          - label: "Produtos"
+            name: "produtos"
+            widget: "list"
+            summary: "{{fields.title}} — {{fields.category}}"
+            fields:
+              - { label: "ID", name: "id", widget: "number", value_type: "int", hint: "Não repita um ID já usado por outro produto." }
+              - { label: "Nome do Produto", name: "title", widget: "string" }
+              - label: "Categoria"
+                name: "category"
+                widget: "select"
+                options:
+                  - { label: "Agendas", value: "agendas" }
+                  - { label: "Cadernos", value: "cadernos" }
+                  - { label: "Canetas & Lápis", value: "canetas" }
+                  - { label: "Borrachas & Apontadores", value: "borrachas" }
+                  - { label: "Escolar", value: "escolar" }
+                  - { label: "Escritório", value: "escritorio" }
+                  - { label: "Linha Fofa", value: "linha-fofa" }
+                  - { label: "Kits & Presentes", value: "kits" }
+                  - { label: "Criativo", value: "criativo" }
+                  - { label: "Gamer", value: "gamer" }
+                  - { label: "Informática", value: "informatica" }
+                  - { label: "Câmeras", value: "cameras" }
+              - { label: "Preço (R$)", name: "price", widget: "number", value_type: "float" }
+              - { label: "Foto do Produto", name: "image", widget: "image", hint: "Clique ou arraste a foto aqui. Recomendado: fundo branco, quadrada." }

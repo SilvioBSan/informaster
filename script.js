@@ -1,3 +1,34 @@
+// --- Configuração do EmailJS (e-mail de confirmação de pedido) ---
+// 1. Crie uma conta grátis em https://www.emailjs.com (200 e-mails/mês no plano free)
+// 2. Em "Email Services", conecte seu e-mail (Gmail, Outlook, etc.) e copie o SERVICE_ID
+// 3. Em "Email Templates", crie um modelo usando as variáveis {{to_name}}, {{to_email}},
+//    {{order_number}}, {{order_items}}, {{order_total}}, {{order_address}} — e copie o TEMPLATE_ID
+// 4. Em "Account" > "General", copie sua PUBLIC_KEY
+// 5. Cole os 3 valores abaixo, entre aspas, no lugar de "COLE_AQUI..."
+const EMAILJS_SERVICE_ID = 'COLE_AQUI_SEU_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID = 'COLE_AQUI_SEU_TEMPLATE_ID';
+const EMAILJS_PUBLIC_KEY = 'COLE_AQUI_SUA_PUBLIC_KEY';
+
+if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY.indexOf('COLE_AQUI') === -1) {
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+}
+
+function sendOrderConfirmationEmail(orderData) {
+    if (typeof emailjs === 'undefined' || EMAILJS_PUBLIC_KEY.indexOf('COLE_AQUI') !== -1) {
+        console.warn('EmailJS não configurado ainda — e-mail de confirmação não foi enviado. Veja as instruções no topo do script.js.');
+        return;
+    }
+
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, orderData)
+        .then(() => {
+            showToast('E-mail de confirmação enviado!');
+        })
+        .catch((error) => {
+            console.error('Falha ao enviar e-mail de confirmação:', error);
+            showToast('Pedido confirmado, mas o e-mail não pôde ser enviado.');
+        });
+}
+
 // --- Base de Dados dos Produtos ---
 const products = [
     // Agendas
@@ -247,7 +278,7 @@ function renderProducts(productsToRender) {
     productsGrid.innerHTML = '';
     
     if (productsToRender.length === 0) {
-        productsGrid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 40px;">Nenhum produto encontrado.</p>`;
+        productsGrid.innerHTML = `<p class="no-products-msg">Nenhum produto encontrado.</p>`;
         return;
     }
 
@@ -381,6 +412,7 @@ function closeCartSidebar() {
 
 cartBtn.addEventListener('click', openCartSidebar);
 closeCart.addEventListener('click', closeCartSidebar);
+document.getElementById('continueShoppingBtn').addEventListener('click', closeCartSidebar);
 overlay.addEventListener('click', () => {
     closeCartSidebar();
     closeAllModals();
@@ -470,8 +502,192 @@ document.getElementById('qvAddBtn').addEventListener('click', () => {
     closeQuickViewModal();
 });
 
-// --- Máscara simples para CEP ---
+// --- Fluxo de Checkout (multi-etapas) e Modais ---
+function closeAllModals() {
+    checkoutModal.classList.remove('active');
+    successModal.classList.remove('active');
+    closeQuickViewModal();
+}
+
+const SHIPPING_FLAT_RATE = 19.90;
+function getShippingCost(subtotal) {
+    return subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FLAT_RATE;
+}
+
+let checkoutStep = 1;
+const TOTAL_CHECKOUT_STEPS = 4;
+const checkoutBackBtn = document.getElementById('checkoutBackBtn');
+const checkoutNextBtn = document.getElementById('checkoutNextBtn');
+
+function updateCheckoutStepUI() {
+    document.querySelectorAll('.checkout-step').forEach(el => {
+        const n = parseInt(el.getAttribute('data-step'), 10);
+        el.classList.toggle('active', n === checkoutStep);
+        el.classList.toggle('done', n < checkoutStep);
+    });
+    document.querySelectorAll('.checkout-panel').forEach(el => {
+        el.classList.toggle('active', parseInt(el.getAttribute('data-panel'), 10) === checkoutStep);
+    });
+    checkoutBackBtn.style.visibility = checkoutStep === 1 ? 'hidden' : 'visible';
+    checkoutNextBtn.textContent = checkoutStep === TOTAL_CHECKOUT_STEPS ? 'Confirmar Pedido' : 'Continuar';
+    if (checkoutStep === TOTAL_CHECKOUT_STEPS) renderReview();
+}
+
+function validatePanel(panelSelector) {
+    const panel = document.querySelector(panelSelector);
+    const inputs = panel.querySelectorAll('input[required]');
+    for (const input of inputs) {
+        if (!input.checkValidity()) {
+            input.reportValidity();
+            return false;
+        }
+    }
+    return true;
+}
+
+function getSelectedPaymentMethod() {
+    return document.querySelector('.payment-tab.active').getAttribute('data-method');
+}
+
+function validateCardFieldsIfNeeded() {
+    if (getSelectedPaymentMethod() !== 'cartao') return true;
+    const ids = ['cardNumber', 'cardName', 'cardExpiry', 'cardCvv'];
+    for (const id of ids) {
+        const el = document.getElementById(id);
+        if (!el.value.trim()) {
+            el.focus();
+            showToast('Preencha os dados do cartão para continuar');
+            return false;
+        }
+    }
+    return true;
+}
+
+function populateInstallments() {
+    const select = document.getElementById('installments');
+    select.innerHTML = '';
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const total = subtotal + getShippingCost(subtotal);
+    for (let n = 1; n <= 3; n++) {
+        const opt = document.createElement('option');
+        opt.value = n;
+        opt.textContent = `${n}x de R$ ${(total / n).toFixed(2).replace('.', ',')} sem juros`;
+        select.appendChild(opt);
+    }
+}
+
+function renderReview() {
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const shipping = getShippingCost(subtotal);
+    const total = subtotal + shipping;
+
+    document.getElementById('reviewItems').innerHTML = cart.map(item => `
+        <div class="review-item-row">
+            <span>${item.quantity}x ${item.title}</span>
+            <span>R$ ${(item.price * item.quantity).toFixed(2).replace('.', ',')}</span>
+        </div>
+    `).join('');
+
+    const street = document.getElementById('street').value;
+    const number = document.getElementById('number').value;
+    const complement = document.getElementById('complement').value;
+    const neighborhood = document.getElementById('neighborhood').value;
+    const city = document.getElementById('city').value;
+    const state = document.getElementById('state').value;
+    const cepValue = document.getElementById('cep').value;
+    document.getElementById('reviewAddress').textContent =
+        `${street}, ${number}${complement ? ' - ' + complement : ''} — ${neighborhood}, ${city}/${state} — CEP ${cepValue}`;
+
+    const method = getSelectedPaymentMethod();
+    let paymentLabel;
+    if (method === 'cartao') {
+        const last4 = document.getElementById('cardNumber').value.replace(/\D/g, '').slice(-4);
+        const installments = document.getElementById('installments').value;
+        paymentLabel = `Cartão de crédito terminando em ${last4 || '----'}, em ${installments}x`;
+    } else if (method === 'pix') {
+        paymentLabel = 'Pix (código gerado após a confirmação)';
+    } else {
+        paymentLabel = 'Boleto bancário (vencimento em 3 dias úteis)';
+    }
+    document.getElementById('reviewPayment').textContent = paymentLabel;
+
+    document.getElementById('reviewSubtotal').textContent = `R$ ${subtotal.toFixed(2).replace('.', ',')}`;
+    document.getElementById('reviewShipping').textContent = shipping === 0 ? 'Grátis' : `R$ ${shipping.toFixed(2).replace('.', ',')}`;
+    document.getElementById('reviewTotal').textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+}
+
+function confirmOrder() {
+    const orderNumber = 'IM-' + Date.now().toString().slice(-6);
+    document.getElementById('orderNumberDisplay').textContent = orderNumber;
+
+    const subtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    const shipping = getShippingCost(subtotal);
+    const total = subtotal + shipping;
+
+    const itemsText = cart.map(item => `${item.quantity}x ${item.title} — R$ ${(item.price * item.quantity).toFixed(2).replace('.', ',')}`).join('\n');
+    const street = document.getElementById('street').value;
+    const number = document.getElementById('number').value;
+    const complement = document.getElementById('complement').value;
+    const neighborhood = document.getElementById('neighborhood').value;
+    const city = document.getElementById('city').value;
+    const state = document.getElementById('state').value;
+    const addressText = `${street}, ${number}${complement ? ' - ' + complement : ''} — ${neighborhood}, ${city}/${state}`;
+
+    sendOrderConfirmationEmail({
+        to_name: document.getElementById('name').value,
+        to_email: document.getElementById('email').value,
+        order_number: orderNumber,
+        order_items: itemsText,
+        order_total: `R$ ${total.toFixed(2).replace('.', ',')}`,
+        order_address: addressText
+    });
+
+    checkoutModal.classList.remove('active');
+    successModal.classList.add('active');
+
+    cart = [];
+    updateCartUI();
+    checkoutForm.reset();
+    checkoutStep = 1;
+    updateCheckoutStepUI();
+}
+
+// Abas de forma de pagamento (Cartão / Pix / Boleto)
+document.querySelectorAll('.payment-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('.payment-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const method = tab.getAttribute('data-method');
+        document.querySelectorAll('.payment-panel').forEach(p => p.classList.toggle('active', p.getAttribute('data-payment') === method));
+    });
+});
+
+// Máscaras dos campos de cartão
+const cardNumberInput = document.getElementById('cardNumber');
+if (cardNumberInput) {
+    cardNumberInput.addEventListener('input', (e) => {
+        let v = e.target.value.replace(/\D/g, '').slice(0, 16);
+        e.target.value = v.replace(/(\d{4})(?=\d)/g, '$1 ');
+    });
+}
+const cardExpiryInput = document.getElementById('cardExpiry');
+if (cardExpiryInput) {
+    cardExpiryInput.addEventListener('input', (e) => {
+        let v = e.target.value.replace(/\D/g, '').slice(0, 4);
+        if (v.length > 2) v = v.slice(0, 2) + '/' + v.slice(2);
+        e.target.value = v;
+    });
+}
+const cardCvvInput = document.getElementById('cardCvv');
+if (cardCvvInput) {
+    cardCvvInput.addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/\D/g, '').slice(0, 4);
+    });
+}
+
+// CEP: máscara + busca automática de endereço (ViaCEP, API pública gratuita)
 const cepInput = document.getElementById('cep');
+const cepStatus = document.getElementById('cepStatus');
 if (cepInput) {
     cepInput.addEventListener('input', (e) => {
         let value = e.target.value.replace(/\D/g, '');
@@ -480,18 +696,38 @@ if (cepInput) {
             value = value.replace(/^(\d{5})(\d)/, '$1-$2');
         }
         e.target.value = value;
+        cepStatus.textContent = '';
     });
-}
 
-// --- Fluxo de Checkout e Modais ---
-function closeAllModals() {
-    checkoutModal.classList.remove('active');
-    successModal.classList.remove('active');
-    closeQuickViewModal();
+    cepInput.addEventListener('blur', () => {
+        const digits = cepInput.value.replace(/\D/g, '');
+        if (digits.length !== 8) return;
+        cepStatus.textContent = 'Buscando endereço...';
+        fetch(`https://viacep.com.br/ws/${digits}/json/`)
+            .then(res => res.json())
+            .then(data => {
+                if (data.erro) {
+                    cepStatus.textContent = 'CEP não encontrado — preencha manualmente';
+                    return;
+                }
+                document.getElementById('street').value = data.logradouro || '';
+                document.getElementById('neighborhood').value = data.bairro || '';
+                document.getElementById('city').value = data.localidade || '';
+                document.getElementById('state').value = data.uf || '';
+                cepStatus.textContent = 'Endereço encontrado!';
+                document.getElementById('number').focus();
+            })
+            .catch(() => {
+                cepStatus.textContent = 'Não foi possível buscar o CEP agora — preencha manualmente';
+            });
+    });
 }
 
 checkoutBtn.addEventListener('click', () => {
     closeCartSidebar();
+    checkoutStep = 1;
+    populateInstallments();
+    updateCheckoutStepUI();
     checkoutModal.classList.add('active');
     overlay.classList.add('active');
 });
@@ -501,21 +737,26 @@ closeModal.addEventListener('click', () => {
     overlay.classList.remove('active');
 });
 
-checkoutForm.addEventListener('submit', (e) => {
-    e.preventDefault();
+checkoutForm.addEventListener('submit', (e) => e.preventDefault());
 
-    // Gerar um número de pedido simples (troque por um ID real vindo do backend/gateway de pagamento)
-    const orderNumber = 'IM-' + Date.now().toString().slice(-6);
-    document.getElementById('orderNumberDisplay').textContent = orderNumber;
+checkoutBackBtn.addEventListener('click', () => {
+    if (checkoutStep > 1) {
+        checkoutStep -= 1;
+        updateCheckoutStepUI();
+    }
+});
 
-    // Fechar modal de checkout e abrir modal de sucesso
-    checkoutModal.classList.remove('active');
-    successModal.classList.add('active');
+checkoutNextBtn.addEventListener('click', () => {
+    if (checkoutStep === 1 && !validatePanel('.checkout-panel[data-panel="1"]')) return;
+    if (checkoutStep === 2 && !validatePanel('.checkout-panel[data-panel="2"]')) return;
+    if (checkoutStep === 3 && !validateCardFieldsIfNeeded()) return;
 
-    // Limpar carrinho e formulário
-    cart = [];
-    updateCartUI();
-    checkoutForm.reset();
+    if (checkoutStep === TOTAL_CHECKOUT_STEPS) {
+        confirmOrder();
+        return;
+    }
+    checkoutStep += 1;
+    updateCheckoutStepUI();
 });
 
 finishSuccessBtn.addEventListener('click', () => {

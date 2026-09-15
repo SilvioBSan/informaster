@@ -8,10 +8,13 @@
     <meta property="og:title" content="InforMaster Loja — Papelaria, Informática e Segurança">
     <meta property="og:description" content="Cadernos, agendas, acessórios de informática e câmeras de segurança, com 20 anos de tradição em Ilhéus/BA.">
     <meta property="og:type" content="website">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' https: data:; connect-src 'self' https://viacep.com.br https://api.emailjs.com; frame-src 'none'; object-src 'none'; base-uri 'self';">
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
     <!-- FontAwesome para ícones -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- EmailJS (envio de e-mail de confirmação de pedido direto do navegador, sem backend) -->
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <!-- Arquivo CSS -->
     <link rel="stylesheet" href="style.css">
 </head>
@@ -211,7 +214,7 @@
                     <li><a href="#">Sobre a InforMaster</a></li>
                     <li><a href="#">Assistência Técnica</a></li>
                     <li><a href="#">Trocas e Devoluções</a></li>
-                    <li><a href="#">Política de Privacidade</a></li>
+                    <li><a href="privacidade.html">Política de Privacidade</a></li>
                 </ul>
             </div>
 
@@ -245,37 +248,152 @@
                 <span id="cartTotal">R$ 0,00</span>
             </div>
             <button class="checkout-btn" id="checkoutBtn" disabled>Finalizar Compra</button>
+            <button class="continue-shopping-btn" id="continueShoppingBtn">Continuar Comprando</button>
         </div>
     </div>
     <div class="overlay" id="overlay"></div>
 
-    <!-- Modal de Checkout Simulado -->
+    <!-- Modal de Checkout --> 
     <div class="modal" id="checkoutModal">
-        <div class="modal-content">
+        <div class="modal-content checkout-flow-content">
             <button class="close-modal" id="closeModal">&times;</button>
             <h2>Finalizar Pedido</h2>
+
+            <div class="checkout-steps" id="checkoutSteps">
+                <div class="checkout-step active" data-step="1"><span class="step-number">1</span><span class="step-label">Dados</span></div>
+                <div class="checkout-step" data-step="2"><span class="step-number">2</span><span class="step-label">Entrega</span></div>
+                <div class="checkout-step" data-step="3"><span class="step-number">3</span><span class="step-label">Pagamento</span></div>
+                <div class="checkout-step" data-step="4"><span class="step-number">4</span><span class="step-label">Revisão</span></div>
+            </div>
+
             <form id="checkoutForm">
-                <div class="form-group">
-                    <label for="name">Nome Completo</label>
-                    <input type="text" id="name" required placeholder="Ex: Maria Silva">
+
+                <!-- Etapa 1: Dados -->
+                <div class="checkout-panel active" data-panel="1">
+                    <div class="form-group">
+                        <label for="name">Nome Completo</label>
+                        <input type="text" id="name" required placeholder="Ex: Maria Silva">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" required placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">WhatsApp</label>
+                        <input type="tel" id="phone" required placeholder="(73) 99999-9999">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="email">E-mail</label>
-                    <input type="email" id="email" required placeholder="seu@email.com">
+
+                <!-- Etapa 2: Entrega -->
+                <div class="checkout-panel" data-panel="2">
+                    <div class="form-group">
+                        <label for="cep">CEP</label>
+                        <input type="text" id="cep" required placeholder="00000-000" maxlength="9">
+                        <span class="cep-status" id="cepStatus"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="street">Rua</label>
+                        <input type="text" id="street" required placeholder="Nome da rua">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group form-group-small">
+                            <label for="number">Número</label>
+                            <input type="text" id="number" required placeholder="123">
+                        </div>
+                        <div class="form-group">
+                            <label for="complement">Complemento</label>
+                            <input type="text" id="complement" placeholder="Apto, bloco... (opcional)">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="neighborhood">Bairro</label>
+                        <input type="text" id="neighborhood" required placeholder="Bairro">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city">Cidade</label>
+                            <input type="text" id="city" required placeholder="Cidade">
+                        </div>
+                        <div class="form-group form-group-small">
+                            <label for="state">UF</label>
+                            <input type="text" id="state" required placeholder="BA" maxlength="2">
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="cep">CEP</label>
-                    <input type="text" id="cep" required placeholder="00000-000" maxlength="9">
+
+                <!-- Etapa 3: Pagamento -->
+                <div class="checkout-panel" data-panel="3">
+                    <div class="payment-method-tabs">
+                        <button type="button" class="payment-tab active" data-method="cartao"><i class="fa-solid fa-credit-card"></i> Cartão</button>
+                        <button type="button" class="payment-tab" data-method="pix"><i class="fa-brands fa-pix"></i> Pix</button>
+                        <button type="button" class="payment-tab" data-method="boleto"><i class="fa-solid fa-barcode"></i> Boleto</button>
+                    </div>
+
+                    <div class="payment-panel active" data-payment="cartao">
+                        <div class="form-group">
+                            <label for="cardNumber">Número do Cartão</label>
+                            <input type="text" id="cardNumber" placeholder="0000 0000 0000 0000" maxlength="19">
+                        </div>
+                        <div class="form-group">
+                            <label for="cardName">Nome Impresso no Cartão</label>
+                            <input type="text" id="cardName" placeholder="Como está no cartão">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cardExpiry">Validade</label>
+                                <input type="text" id="cardExpiry" placeholder="MM/AA" maxlength="5">
+                            </div>
+                            <div class="form-group form-group-small">
+                                <label for="cardCvv">CVV</label>
+                                <input type="text" id="cardCvv" placeholder="000" maxlength="4">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="installments">Parcelas</label>
+                            <select id="installments"></select>
+                        </div>
+                    </div>
+
+                    <div class="payment-panel" data-payment="pix">
+                        <p class="payment-hint">Ao confirmar o pedido, geramos um código Pix para você pagar pelo app do seu banco.</p>
+                        <div class="pix-preview">
+                            <div class="pix-qr-placeholder"><i class="fa-solid fa-qrcode"></i></div>
+                            <p class="payment-hint">O QR Code real é gerado após a confirmação do pedido.</p>
+                        </div>
+                    </div>
+
+                    <div class="payment-panel" data-payment="boleto">
+                        <p class="payment-hint">O boleto vence em 3 dias úteis. A compensação pode levar até 2 dias úteis após o pagamento.</p>
+                        <div class="boleto-barcode"></div>
+                        <p class="payment-hint">O boleto real é gerado após a confirmação do pedido.</p>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="payment">Forma de Pagamento</label>
-                    <select id="payment" required>
-                        <option value="">Selecione...</option>
-                        <option value="cartao">Cartão de Crédito</option>
-                        <option value="pix">PIX (Aprovação imediata)</option>
-                    </select>
+
+                <!-- Etapa 4: Revisão -->
+                <div class="checkout-panel" data-panel="4">
+                    <div class="review-block">
+                        <h4>Itens do Pedido</h4>
+                        <div id="reviewItems"></div>
+                    </div>
+                    <div class="review-block">
+                        <h4>Entrega</h4>
+                        <p id="reviewAddress"></p>
+                    </div>
+                    <div class="review-block">
+                        <h4>Pagamento</h4>
+                        <p id="reviewPayment"></p>
+                    </div>
+                    <div class="review-totals">
+                        <div class="review-total-row"><span>Subtotal</span><span id="reviewSubtotal"></span></div>
+                        <div class="review-total-row"><span>Frete</span><span id="reviewShipping"></span></div>
+                        <div class="review-total-row review-total-final"><span>Total</span><span id="reviewTotal"></span></div>
+                    </div>
                 </div>
-                <button type="submit" class="submit-order-btn">Confirmar Pedido</button>
+
+                <div class="checkout-nav">
+                    <button type="button" class="checkout-back-btn" id="checkoutBackBtn">Voltar</button>
+                    <button type="button" class="submit-order-btn" id="checkoutNextBtn">Continuar</button>
+                </div>
             </form>
         </div>
     </div>
